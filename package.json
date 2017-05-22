@@ -5,6 +5,12 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "universal": "npm-run-all prepare-server-build start-development-workflow",
+    "start-development-workflow": "npm-run-all --parallel development-webpack-build-for-client development-webpack-build-for-server development-start-server",
+    "prepare-server-build": "universal-webpack --settings ./universal-webpack-settings.json prepare",
+    "development-webpack-build-for-client": "better-npm-run development-webpack-build-for-client",
+    "development-webpack-build-for-server": "better-npm-run development-webpack-build-for-server",
+    "development-start-server": "better-npm-run development-start-server",
     "build": "bin/build-checks.js && better-npm-run build",
     "build-locales": "bin/build-locales",
     "extract-locales": "better-npm-run extract-locales",
@@ -29,6 +35,27 @@
     "webpack-dev-server": "npm run build-locales && better-npm-run webpack-dev-server"
   },
   "betterScripts": {
+    "development-start-server": {
+      "command": "nodemon ./bin/start-server.babel.js --watch ./src | bunyan",
+      "env": {
+        "NODE_APP_INSTANCE": "amo",
+        "NODE_PATH": "./:./src"
+      }
+    },
+    "development-webpack-build-for-client": {
+      "command": "webpack --config ./webpack.dev.config.client.babel.js --watch --colors --display-error-details",
+      "env": {
+        "NODE_APP_INSTANCE": "amo",
+        "NODE_PATH": "./:./src"
+      }
+    },
+    "development-webpack-build-for-server": {
+      "command": "webpack --config ./webpack.dev.config.server.babel.js --watch --colors --display-error-details",
+      "env": {
+        "NODE_APP_INSTANCE": "amo",
+        "NODE_PATH": "./:./src"
+      }
+    },
     "build": {
       "command": "npm run clean && npm run version-check && npm run build-locales && webpack --bail --verbose --display-error-details --progress --colors --config webpack.prod.config.babel.js",
       "env": {
@@ -221,8 +248,7 @@
     "ua-parser-js": "0.7.12",
     "url": "0.11.0",
     "url-loader": "0.5.8",
-    "utf8": "2.1.2",
-    "webpack-isomorphic-tools": "2.6.6"
+    "utf8": "2.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
@@ -273,6 +299,8 @@
     "karma-webpack": "^2.0.3",
     "mocha": "^3.3.0",
     "node-sass": "^4.5.2",
+    "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
     "piping": "^1.0.0-rc.4",
     "po2json": "^0.4.5",
     "postcss-loader": "^1.3.3",
@@ -295,6 +323,7 @@
     "svg-url-loader": "^2.0.2",
     "tmp": "^0.0.31",
     "tosource": "^1.0.0",
+    "universal-webpack": "^0.3.9",
     "webpack": "^2.5.1",
     "webpack-dev-middleware": "^1.10.2",
     "webpack-dev-server": "^2.4.5",

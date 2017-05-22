@@ -6,12 +6,9 @@ import config from 'config';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import SriPlugin from 'webpack-subresource-integrity';
 import webpack from 'webpack';
-import WebpackIsomorphicToolsPlugin from 'webpack-isomorphic-tools/plugin';
 
 import SriDataPlugin from './src/core/server/sriDataPlugin';
 import { getPlugins, getRules } from './webpack-common';
-import webpackIsomorphicToolsConfig
-  from './src/core/server/webpack-isomorphic-tools-config';
 
 const appName = config.get('appName');
 const appsBuildList = appName ? [appName] : config.get('validAppNames');
@@ -50,7 +47,6 @@ const settings = {
         drop_console: true,
       },
     }),
-    new WebpackIsomorphicToolsPlugin(webpackIsomorphicToolsConfig),
     new SriPlugin({ hashFuncNames: ['sha512'] }),
     new SriDataPlugin({
       saveAs: path.join(__dirname, 'dist', 'sri.json'),

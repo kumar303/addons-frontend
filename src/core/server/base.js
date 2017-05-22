@@ -16,7 +16,6 @@ import { Provider } from 'react-redux';
 import { match } from 'react-router';
 import { ReduxAsyncConnect, loadOnServer } from 'redux-connect';
 import { loadFail } from 'redux-connect/lib/store';
-import WebpackIsomorphicTools from 'webpack-isomorphic-tools';
 
 import { createApiError } from 'core/api';
 import ServerHtml from 'core/containers/ServerHtml';
@@ -32,8 +31,6 @@ import {
   makeI18n,
 } from 'core/i18n/utils';
 import I18nProvider from 'core/i18n/Provider';
-
-import WebpackIsomorphicToolsConfig from './webpack-isomorphic-tools-config';
 
 
 const env = config.util.getEnv('NODE_ENV');
@@ -85,7 +82,9 @@ function getPageProps({ noScriptStyles = '', store, req, res }) {
 
   return {
     appName,
-    assets: webpackIsomorphicTools.assets(),
+    // TODO: where are assets?
+    assets: path.resolve(config.get('basePath'), 'dist'),
+    // assets: webpackIsomorphicTools.assets(),
     htmlLang: lang,
     htmlDir: dir,
     includeSri: isDeployed,
@@ -228,14 +227,6 @@ function baseServer(routes, createStore, { appInstanceName = appName } = {}) {
   }
 
   app.use((req, res, next) => {
-    if (isDevelopment) {
-      log.info(oneLine`Clearing require cache for webpack isomorphic tools.
-        [Development Mode]`);
-
-      // clear require() cache if in development mode
-      webpackIsomorphicTools.refresh();
-    }
-
     match({ location: req.url, routes }, (
       matchError, redirectLocation, renderProps
     ) => {
@@ -348,9 +339,6 @@ export function runServer({
   const port = config.get('serverPort');
   const host = config.get('serverHost');
 
-  const isoMorphicServer = new WebpackIsomorphicTools(
-    WebpackIsomorphicToolsConfig);
-
   return new Promise((resolve) => {
     if (!app) {
       throw new Error(
@@ -358,11 +346,7 @@ export function runServer({
     }
     resolve();
   })
-    .then(() => isoMorphicServer.server(config.get('basePath')))
     .then(() => {
-      global.webpackIsomorphicTools = isoMorphicServer;
-      // Webpack Isomorphic tools is ready
-      // now fire up the actual server.
       return new Promise((resolve, reject) => {
         /* eslint-disable global-require, import/no-dynamic-require */
         const routes = require(`${app}/routes`).default;

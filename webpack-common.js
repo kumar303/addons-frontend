@@ -3,7 +3,7 @@ import config from 'config';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import webpack from 'webpack';
 
-import { getClientConfig } from 'core/utils';
+import { getClientConfig } from './src/core/utils';
 
 // Common options for URL loaders (i.e. derivatives of file-loader).
 const urlLoaderOptions = {

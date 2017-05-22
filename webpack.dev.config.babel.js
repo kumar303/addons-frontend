@@ -5,17 +5,11 @@ import path from 'path';
 
 import config from 'config';
 import webpack from 'webpack';
-import WebpackIsomorphicToolsPlugin from 'webpack-isomorphic-tools/plugin';
 
 import { getPlugins, getRules } from './webpack-common';
 import webpackConfig from './webpack.prod.config.babel';
-import webpackIsomorphicToolsConfig
-  from './src/core/server/webpack-isomorphic-tools-config';
 
 const localDevelopment = config.util.getEnv('NODE_ENV') === 'development';
-
-const webpackIsomorphicToolsPlugin =
-  new WebpackIsomorphicToolsPlugin(webpackIsomorphicToolsConfig);
 
 const babelrc = fs.readFileSync('./.babelrc');
 const babelrcObject = JSON.parse(babelrc);
@@ -54,6 +48,7 @@ for (const app of appsBuildList) {
 
 export default Object.assign({}, webpackConfig, {
   devtool: 'inline-source-map',
+  devtool: false,
   devServer: {
     progress: true,
   },
@@ -72,6 +67,5 @@ export default Object.assign({}, webpackConfig, {
     ...getPlugins(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.IgnorePlugin(/webpack-stats\.json$/),
-    webpackIsomorphicToolsPlugin.development(),
   ],
 });

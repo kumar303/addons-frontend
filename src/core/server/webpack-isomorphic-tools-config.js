@@ -1,4 +1,5 @@
 /* eslint-disable no-else-return */
+// TODO: delete this
 import WebpackIsomorphicToolsPlugin from 'webpack-isomorphic-tools/plugin';
 
 export default {
